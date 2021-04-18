@@ -1,33 +1,25 @@
 extern crate git2;
 
-use std::env;
 use git2::*;
+use std::env;
 
 fn main() {
-    let current_dir = match env::current_dir() {
-        Ok(current_dir) => current_dir,
-        Err(e) => panic!("failed to read current directory: {}", e),
-    };
-    println!("Current dir is {}", current_dir.display());
+    let current_dir = env::current_dir().expect("Invalid dir");
 
-    //let current_dir: std::path::PathBuf = [r"/home", "josea", "my_repos", "git_cmd"].iter().collect();
-    //println!("Current dir is {}", current_dir.display());
+    let repo = Repository::init(current_dir).expect("Invalid repo");
 
-    let my_repo = match Repository::init(current_dir) {
-        Ok(my_repo) => my_repo,
-        Err(e) => panic!("Faile:d to open: {}", e),
-    };
+    let branch_name: String;
 
-    let my_head = match my_repo.head() {
-        Ok(my_head) => my_head,
-        Err(e) => panic!("Can't read HEAD: {}", e),
-    };
-
-    println!("Hello Wold");
-
-    //let name = match Reference::normalize_name(my_head, ReferenceFormat::NORMAL) {
-    //    Ok(name) => name,
-    //    Err(e) => panic!("Can't normalize name"),
-    //};
-    //println!("{}", name);
+    if repo.head_detached().expect("Invalid HEAD") {
+        branch_name = "detached".to_string();
+    } else {
+        let head = repo.head().expect("Invalid HEAD");
+        let branch: git2::Branch = Branch::wrap(head);
+        branch_name = branch
+            .name()
+            .expect("Invalid branch")
+            .expect("Invalid branch")
+            .to_string();
+    }
+    print!("({})", branch_name);
 }
