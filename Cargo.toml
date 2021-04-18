@@ -1,0 +1,8 @@
+[package]
+name = "git_cmd"
+version = "0.1.0"
+authors = ["passband"]
+
+[dependencies]
+# sudo apt install libssl-dev
+git2 = "0.13"
