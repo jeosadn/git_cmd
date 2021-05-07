@@ -6,7 +6,10 @@ use std::env;
 fn main() {
     let current_dir = env::current_dir().expect("Invalid dir");
 
-    let repo = Repository::init(current_dir).expect("Invalid repo");
+    let repo = match Repository::discover(current_dir) {
+        Ok(repo) => repo,
+        Err(_error) => return,
+    };
 
     let branch_name: String;
 
